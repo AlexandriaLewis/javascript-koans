@@ -40,8 +40,22 @@ describe("About Applying What We Have Learnt", function() {
       var productsICanEat = [];
 
       /* solve using filter() & all() / any() */
+      _(products).chain()
+      .filter(function(product){
+        return !product.containsNuts;
+      })
+      .any(function(el){
+        return !el.ingredients.includes('mushrooms');
+      })
+      .filter(function(product){
+        return product.ingredients.indexOf('mushrooms') === -1;
+      })
+      .each(function(noNutsOrShrooms){
+        productsICanEat.push(noNutsOrShrooms)
+      })
+      .value();
 
-      expect(productsICanEat.length).toBe(0);
+      expect(productsICanEat.length).toBe(1);
   });
 
   /*********************************************************************************/
@@ -60,9 +74,16 @@ describe("About Applying What We Have Learnt", function() {
 
   it("should add all the natural numbers below 1000 that are multiples of 3 or 5 (functional)", function () {
 
-    var sum = FILL_ME_IN;    /* try chaining range() and reduce() */
+    var sum = _(_.range(1,1000)).chain()
+    .filter(function(el){
+      return el % 3 === 0 || el % 5 === 0;
+    })
+    .reduce(function(accumulator, element){
+      return accumulator += element;
+    },0)
+    .value();    /* try chaining range() and reduce() */
 
-    expect(233168).toBe(233168);
+    expect(233168).toBe(sum);
   });
 
   /*********************************************************************************/
@@ -82,8 +103,29 @@ describe("About Applying What We Have Learnt", function() {
     var ingredientCount = { "{ingredient name}": 0 };
 
     /* chain() together map(), flatten() and reduce() */
+    var ingredients = products.map(function(el){
+      return el.ingredients;
+    })
+    var flatIngre = _.flatten(ingredients);
+    var final = products.reduce(flatIngre, function(acc,el){
+      if (acc[el]){
+        acc[el] += 1;
+      } else {
+        acc[el] = 1;
+      }
+      return acc;
+    },{})
 
-    expect(ingredientCount['mushrooms']).toBe(undefined);
+    var obj = {}
+    _.forEach(flatIngre, function(el){
+      if(obj[el]){
+        obj[el] += 1;
+      } else {
+        obj[el] = 1;
+      }
+    })
+
+    expect(ingredientCount['mushrooms']).toBe(2);
   });
 
   /*********************************************************************************/
